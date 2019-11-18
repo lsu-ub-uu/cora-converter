@@ -19,8 +19,10 @@
 
 package se.uu.ub.cora.converter;
 
+import se.uu.ub.cora.data.DataElement;
+
 public interface Converter {
-	// String convert(DataElement dataElement);
-	//
-	// DataElement convert(String dataString);
+	String convert(DataElement dataElement);
+
+	DataElement convert(String dataString);
 }

@@ -20,7 +20,20 @@
 package se.uu.ub.cora.converter.spy;
 
 import se.uu.ub.cora.converter.Converter;
+import se.uu.ub.cora.data.DataElement;
 
 public class ConverterSpy implements Converter {
+
+	@Override
+	public String convert(DataElement dataElement) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataElement convert(String dataString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
