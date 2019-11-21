@@ -20,6 +20,7 @@
 package se.uu.ub.cora.converter;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
 import java.lang.reflect.Constructor;
@@ -32,7 +33,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.converter.spy.ConverterFactorySpy;
+import se.uu.ub.cora.converter.spy.ConverterSpy;
 import se.uu.ub.cora.converter.spy.log.LoggerFactorySpy;
 import se.uu.ub.cora.converter.starter.ConverterModuleStarter;
 import se.uu.ub.cora.converter.starter.ConverterModuleStarterImp;
@@ -42,7 +43,7 @@ import se.uu.ub.cora.logger.LoggerProvider;
 public class ConverterProviderTest {
 	private LoggerFactorySpy loggerFactorySpy;
 	private String testedClassName = "ConverterProvider";
-	private String converterName = "xml1";
+	private String converterName = "xml0";
 	private ConverterModuleStarter defaultStarter;
 
 	@BeforeTest
@@ -51,6 +52,7 @@ public class ConverterProviderTest {
 		loggerFactorySpy.resetLogs(testedClassName);
 		LoggerProvider.setLoggerFactory(loggerFactorySpy);
 		defaultStarter = ConverterProvider.getStarter();
+		ConverterProvider.resetConverterFactories();
 	}
 
 	@BeforeMethod
@@ -58,7 +60,7 @@ public class ConverterProviderTest {
 		loggerFactorySpy = LoggerFactorySpy.getInstance();
 		loggerFactorySpy.resetLogs(testedClassName);
 		LoggerProvider.setLoggerFactory(loggerFactorySpy);
-		ConverterProvider.setConverterFactory(null);
+		ConverterProvider.resetConverterFactories();
 	}
 
 	@Test
@@ -79,40 +81,44 @@ public class ConverterProviderTest {
 	}
 
 	@Test
-	public void testSetConverterFactoryForUsingInAnotherTest() throws Exception {
-		ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy();
-		ConverterProvider.setConverterFactory(converterFactorySpy);
-
-		Converter converter = ConverterProvider.getConverter(converterName);
-
-		assertEquals(converterFactorySpy.converterName, converterName);
-		assertEquals(converter, converterFactorySpy.converter);
-	}
-
-	@Test
 	public void testStartingOfProviderFactoryCanOnlyBeDoneByOneThreadAtATime() throws Exception {
-		Method declaredMethod = LoggerProvider.class.getDeclaredMethod("ensureLoggerFactoryIsSet");
+		Method declaredMethod = ConverterProvider.class
+				.getDeclaredMethod("ensureConverterFactoryIsSet");
 		assertTrue(Modifier.isSynchronized(declaredMethod.getModifiers()));
 	}
 
-	@Test
-	public void testConverterModuleStarterIsCalledOnGetConverter() throws Exception {
-		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy();
+	// TODO: Väldigt oklart vad gör den här test
+	// @Test
+	// public void testSetConverterFactoryForUsingInAnotherTest() throws Exception {
+	// startAndSetConverterModuleStarterSpy(1);
+	// ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy("xml1");
+	// ConverterProvider.setConverterFactory("xml1", converterFactorySpy);
+	//
+	// Converter converter = ConverterProvider.getConverter("xml1");
+	//
+	// assertEquals(converterFactorySpy.converterName, converterName);
+	// assertEquals(converter, converterFactorySpy.converter);
+	// }
 
-		ConverterProvider.getConverter(converterName);
-		assertTrue(starter.startWasCalled);
-	}
-
-	private ConverterModuleStarterSpy startAndSetConverterModuleStarterSpy() {
-		ConverterModuleStarter starter = new ConverterModuleStarterSpy();
+	private ConverterModuleStarterSpy startAndSetConverterModuleStarterSpy(
+			int noOfConverterFactoriesToReturn) {
+		ConverterModuleStarter starter = new ConverterModuleStarterSpy(
+				noOfConverterFactoriesToReturn);
 		ConverterProvider.setStarter(starter);
 		return (ConverterModuleStarterSpy) starter;
 	}
 
 	@Test
-	public void testLoggingOnGetConverter() {
-		startAndSetConverterModuleStarterSpy();
+	public void testConverterModuleStarterIsCalledOnGetConverter() throws Exception {
+		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 
+		ConverterProvider.getConverter(converterName);
+		assertTrue(starter.startWasCalled);
+	}
+
+	@Test
+	public void testLoggingOnGetConverter() {
+		startAndSetConverterModuleStarterSpy(1);
 		ConverterProvider.getConverter(converterName);
 
 		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
@@ -133,11 +139,11 @@ public class ConverterProviderTest {
 
 	@Test
 	public void testErrorIsThrownWhenNoImplementationsAreFound() throws Exception {
-		ConverterProvider.setStarter(defaultStarter);
-		makeSureErrorIsThrownAsNoImplementationsExistInThisModule();
+		startAndSetConverterModuleStarterSpy(0);
+		makeSureErrorIsThrownAsNoImplementationsExistInThisModuleWhenLoading();
 	}
 
-	private void makeSureErrorIsThrownAsNoImplementationsExistInThisModule() {
+	private void makeSureErrorIsThrownAsNoImplementationsExistInThisModuleWhenLoading() {
 		Exception caughtException = null;
 		try {
 
@@ -146,18 +152,53 @@ public class ConverterProviderTest {
 			caughtException = e;
 		}
 		assertTrue(caughtException instanceof ConverterInitializationException);
-		assertEquals(caughtException.getMessage(), "No implementations found for ConverterFactory");
+		assertEquals(caughtException.getMessage(),
+				"No implementations when loading, thrown by SPY");
 	}
 
 	@Test
 	public void testConverterFactoryImplementationsArePassedOnToStarter() throws Exception {
-
-		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy();
+		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 
 		ConverterProvider.getConverter(converterName);
 
 		Iterable<ConverterFactory> iterable = starter.converterFactoryImplementations;
 		assertTrue(iterable instanceof ServiceLoader);
+	}
+
+	@Test
+	public void testConverterFactoryReturnsDifferentFactoriesBasedOnName() throws Exception {
+
+		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(2);
+
+		ConverterSpy converter1 = (ConverterSpy) ConverterProvider.getConverter(converterName);
+		ConverterSpy converter2 = (ConverterSpy) ConverterProvider.getConverter("xml1");
+
+		assertNotSame(converter1.factoryName, converter2.factoryName);
+		assertEquals(starter.converterFactories.size(), 2);
+	}
+
+	@Test
+	public void testIfExceptionIsThrownWhenConverterImplementationNotFoundAfterLoading()
+			throws Exception {
+		startAndSetConverterModuleStarterSpy(1);
+		makeSureErrorIsThrownWhenImplementationNotFoundAfterLoading();
+
+	}
+
+	private void makeSureErrorIsThrownWhenImplementationNotFoundAfterLoading() {
+		String converterImplementationName = "NonexistingConverter";
+		Exception caughtException = null;
+		try {
+
+			ConverterProvider.getConverter(converterImplementationName);
+		} catch (Exception e) {
+			caughtException = e;
+		}
+		assertTrue(caughtException instanceof ConverterInitializationException);
+		assertEquals(caughtException.getMessage(),
+				"No implementations found for " + converterImplementationName + " converter.");
+
 	}
 
 }

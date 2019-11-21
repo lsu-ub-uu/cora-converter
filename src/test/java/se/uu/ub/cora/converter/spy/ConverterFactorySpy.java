@@ -24,15 +24,20 @@ import se.uu.ub.cora.converter.ConverterFactory;
 
 public class ConverterFactorySpy implements ConverterFactory {
 
+	public String factoryName;
 	public String converterName;
-	public Converter converter;
+	public ConverterSpy converter;
+
+	public ConverterFactorySpy(String name) {
+		this.factoryName = name;
+	}
 
 	@Override
 	public Converter factorConverter(String converterName) {
 
 		this.converterName = converterName;
 		this.converter = new ConverterSpy();
-
+		converter.factoryName = factoryName;
 		return converter;
 	}
 }

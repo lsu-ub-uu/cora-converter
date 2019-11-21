@@ -18,11 +18,13 @@
  */
 package se.uu.ub.cora.converter.starter;
 
+import java.util.Map;
+
 import se.uu.ub.cora.converter.ConverterFactory;
 
 public interface ConverterModuleStarter {
 
-	ConverterFactory startUsingConverterFactoryImplementations(
+	Map<String, ConverterFactory> startUsingConverterFactoryImplementations(
 			Iterable<ConverterFactory> converterFactoryImplementations);
 
 }

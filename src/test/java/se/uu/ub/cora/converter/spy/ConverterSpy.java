@@ -23,6 +23,7 @@ import se.uu.ub.cora.converter.Converter;
 import se.uu.ub.cora.data.DataElement;
 
 public class ConverterSpy implements Converter {
+	public String factoryName = "";
 
 	@Override
 	public String convert(DataElement dataElement) {

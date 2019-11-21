@@ -18,21 +18,37 @@
  */
 package se.uu.ub.cora.converter.starter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import se.uu.ub.cora.converter.ConverterFactory;
+import se.uu.ub.cora.converter.ConverterInitializationException;
 import se.uu.ub.cora.converter.spy.ConverterFactorySpy;
-import se.uu.ub.cora.converter.starter.ConverterModuleStarter;
 
 public class ConverterModuleStarterSpy implements ConverterModuleStarter {
 
 	public boolean startWasCalled = false;
 	public Iterable<ConverterFactory> converterFactoryImplementations;
+	private int noOfConverterFactories;
+	public Map<String, ConverterFactory> converterFactories;
+
+	public ConverterModuleStarterSpy(int noOfConverterFactories) {
+		this.noOfConverterFactories = noOfConverterFactories;
+	}
 
 	@Override
-	public ConverterFactory startUsingConverterFactoryImplementations(
+	public Map<String, ConverterFactory> startUsingConverterFactoryImplementations(
 			Iterable<ConverterFactory> converterFactoryImplementations) {
 		this.converterFactoryImplementations = converterFactoryImplementations;
 		startWasCalled = true;
-		return new ConverterFactorySpy();
+		if (noOfConverterFactories == 0) {
+			throw new ConverterInitializationException(
+					"No implementations when loading, thrown by SPY");
+		}
+		converterFactories = new HashMap<>();
+		for (int i = 0; i < noOfConverterFactories; i++) {
+			converterFactories.put("xml" + i, new ConverterFactorySpy("xml" + i));
+		}
+		return converterFactories;
 	}
-
 }

@@ -19,6 +19,8 @@
 
 package se.uu.ub.cora.converter.starter;
 
+import java.util.Map;
+
 import se.uu.ub.cora.converter.ConverterFactory;
 import se.uu.ub.cora.converter.ConverterInitializationException;
 import se.uu.ub.cora.logger.Logger;
@@ -31,7 +33,7 @@ public class ConverterModuleStarterImp implements ConverterModuleStarter {
 	private int numberOfImplementations = 0;
 
 	@Override
-	public ConverterFactory startUsingConverterFactoryImplementations(
+	public Map<String, ConverterFactory> startUsingConverterFactoryImplementations(
 			Iterable<ConverterFactory> converterFactoryImplementations) {
 		chooseAndCountFactories(converterFactoryImplementations);
 		throwErrorIfNotOne();

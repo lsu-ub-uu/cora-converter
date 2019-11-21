@@ -42,7 +42,7 @@ public class ConverterModuleStarterTest {
 	@BeforeMethod
 	public void beforeMethod() {
 		loggerFactorySpy = LoggerFactorySpy.getInstance();
-		loggerFactorySpy.resetLogs(testedClassName);
+//		loggerFactorySpy.resetLogs(testedClassName);
 		LoggerProvider.setLoggerFactory(loggerFactorySpy);
 		converterFactoryImplementations = new ArrayList<>();
 		starter = new ConverterModuleStarterImp();

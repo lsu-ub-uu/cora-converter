@@ -19,6 +19,8 @@
 
 package se.uu.ub.cora.converter;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 import se.uu.ub.cora.converter.starter.ConverterModuleStarter;
@@ -28,7 +30,7 @@ import se.uu.ub.cora.logger.LoggerProvider;
 
 public class ConverterProvider {
 
-	private static ConverterFactory converterFactory;
+	private static Map<String, ConverterFactory> converterFactories = new HashMap<>();
 	private static ConverterModuleStarter starter = new ConverterModuleStarterImp();
 	private static Logger log = LoggerProvider.getLoggerForClass(ConverterProvider.class);
 
@@ -39,11 +41,17 @@ public class ConverterProvider {
 
 	public static Converter getConverter(String converterName) {
 		ensureConverterFactoryIsSet();
+		// TODO: second converterName can possibly be removed
+		ConverterFactory converterFactory = converterFactories.get(converterName);
+		if (converterFactory == null) {
+			throw new ConverterInitializationException(
+					"No implementations found for " + converterName + " converter.");
+		}
 		return converterFactory.factorConverter(converterName);
 	}
 
-	private static void ensureConverterFactoryIsSet() {
-		if (null == converterFactory) {
+	private static synchronized void ensureConverterFactoryIsSet() {
+		if (converterFactories.isEmpty()) {
 			log.logInfoUsingMessage("ConverterProvider starting...");
 			getConverterFactoryImpUsingModuleStarter();
 			log.logInfoUsingMessage("ConverterProvider started");
@@ -53,7 +61,7 @@ public class ConverterProvider {
 	private static void getConverterFactoryImpUsingModuleStarter() {
 		Iterable<ConverterFactory> converterFactoryImplementations = ServiceLoader
 				.load(ConverterFactory.class);
-		converterFactory = starter
+		converterFactories = starter
 				.startUsingConverterFactoryImplementations(converterFactoryImplementations);
 	}
 
@@ -66,12 +74,19 @@ public class ConverterProvider {
 	 * @param converterFactory
 	 *            A ConverterFactory to use to create converters for testing
 	 */
-	public static void setConverterFactory(ConverterFactory converterFactory) {
-		ConverterProvider.converterFactory = converterFactory;
-	}
+
+	// TODO: Might not be needed
+	// public static void setConverterFactory(String converterName,
+	// ConverterFactory converterFactory) {
+	// ConverterProvider.converterFactories.put(converterName, converterFactory);
+	// }
 
 	static void setStarter(ConverterModuleStarter starter) {
 		ConverterProvider.starter = starter;
+	}
+
+	static void resetConverterFactories() {
+		converterFactories.clear();
 	}
 
 	static ConverterModuleStarter getStarter() {
