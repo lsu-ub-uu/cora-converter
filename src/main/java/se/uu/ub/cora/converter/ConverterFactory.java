@@ -20,6 +20,8 @@
 package se.uu.ub.cora.converter;
 
 public interface ConverterFactory {
-	Converter factorConverter(String converterName);
+	Converter factorConverter();
+
+	String getName();
 
 }

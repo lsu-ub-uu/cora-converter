@@ -20,9 +20,11 @@
 package se.uu.ub.cora.converter.starter;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -42,7 +44,7 @@ public class ConverterModuleStarterTest {
 	@BeforeMethod
 	public void beforeMethod() {
 		loggerFactorySpy = LoggerFactorySpy.getInstance();
-//		loggerFactorySpy.resetLogs(testedClassName);
+		loggerFactorySpy.resetLogs(testedClassName);
 		LoggerProvider.setLoggerFactory(loggerFactorySpy);
 		converterFactoryImplementations = new ArrayList<>();
 		starter = new ConverterModuleStarterImp();
@@ -66,11 +68,67 @@ public class ConverterModuleStarterTest {
 				"No implementations found for ConverterFactory");
 	}
 
+	@Test
+	public void testForFoundOneImplementation() throws Exception {
+		ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy("XML");
+		converterFactoryImplementations.add(converterFactorySpy);
+
+		Map<String, ConverterFactory> converterFactories = starter
+				.startUsingConverterFactoryImplementations(converterFactoryImplementations);
+		assertEquals(converterFactories.size(), 1);
+		assertSame(converterFactories.get("XML"), converterFactorySpy);
+
+	}
+
+	@Test
+	public void testLoggingNormalStartupWithOneImplementation() throws Exception {
+		ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy("XML");
+		converterFactoryImplementations.add(converterFactorySpy);
+
+		starter.startUsingConverterFactoryImplementations(converterFactoryImplementations);
+
+		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
+				"ConverterFactorySpy found as implementation for ConverterFactory with name XML");
+		assertEquals(loggerFactorySpy.getNoOfInfoLogMessagesUsingClassName(testedClassName), 1);
+	}
+
+	@Test
+	public void testForFoundMultipleImplementations() throws Exception {
+		ConverterFactorySpy xmlConverterFactorySpy = new ConverterFactorySpy("XML");
+		converterFactoryImplementations.add(xmlConverterFactorySpy);
+		ConverterFactorySpy jsonConverterFactorySpy = new ConverterFactorySpy("JSON");
+		converterFactoryImplementations.add(jsonConverterFactorySpy);
+
+		Map<String, ConverterFactory> converterFactories = starter
+				.startUsingConverterFactoryImplementations(converterFactoryImplementations);
+		assertEquals(converterFactories.size(), 2);
+		assertSame(converterFactories.get("XML"), xmlConverterFactorySpy);
+		assertSame(converterFactories.get("JSON"), jsonConverterFactorySpy);
+
+	}
+
+	@Test
+	public void testLoggingNormalStartupWithMultipleImplementation() throws Exception {
+		ConverterFactorySpy xmlConverterFactorySpy = new ConverterFactorySpy("XML");
+		converterFactoryImplementations.add(xmlConverterFactorySpy);
+		ConverterFactorySpy jsonConverterFactorySpy = new ConverterFactorySpy("JSON");
+		converterFactoryImplementations.add(jsonConverterFactorySpy);
+
+		starter.startUsingConverterFactoryImplementations(converterFactoryImplementations);
+
+		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
+				"ConverterFactorySpy found as implementation for ConverterFactory with name XML");
+		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 1),
+				"ConverterFactorySpy found as implementation for ConverterFactory with name JSON");
+
+		assertEquals(loggerFactorySpy.getNoOfInfoLogMessagesUsingClassName(testedClassName), 2);
+	}
+
 	@Test(expectedExceptions = ConverterInitializationException.class, expectedExceptionsMessageRegExp = ""
-			+ "More than one implementations found for ConverterFactory")
-	public void testMoreThanOneImplementationThrowException() throws Exception {
-		converterFactoryImplementations.add(new ConverterFactorySpy());
-		converterFactoryImplementations.add(new ConverterFactorySpy());
+			+ "More than one implementations found for ConverterFactory with name XML")
+	public void testMoreThanOneImplementationWithSameNameThrowException() throws Exception {
+		converterFactoryImplementations.add(new ConverterFactorySpy("XML"));
+		converterFactoryImplementations.add(new ConverterFactorySpy("XML"));
 
 		starter.startUsingConverterFactoryImplementations(converterFactoryImplementations);
 	}
@@ -78,41 +136,19 @@ public class ConverterModuleStarterTest {
 	@Test
 	public void testErrorIsLoggedWhenMoreThanOneImplementations() throws Exception {
 		try {
-			converterFactoryImplementations.add(new ConverterFactorySpy());
-			converterFactoryImplementations.add(new ConverterFactorySpy());
+			converterFactoryImplementations.add(new ConverterFactorySpy("XML"));
+			converterFactoryImplementations.add(new ConverterFactorySpy("XML"));
 			starter.startUsingConverterFactoryImplementations(converterFactoryImplementations);
 		} catch (Exception e) {
 
 		}
 		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
-				"ConverterFactorySpy found as implemetation for ConverterFactory");
+				"ConverterFactorySpy found as implementation for ConverterFactory with name XML");
 		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 1),
-				"ConverterFactorySpy found as implemetation for ConverterFactory");
+				"ConverterFactorySpy found as implementation for ConverterFactory with name XML");
+
 		assertEquals(loggerFactorySpy.getFatalLogMessageUsingClassNameAndNo(testedClassName, 0),
-				"More than one implementations found for ConverterFactory");
-	}
-
-	@Test
-	public void testForFoundImplementation() throws Exception {
-		ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy();
-		converterFactoryImplementations.add(converterFactorySpy);
-
-		ConverterFactory choosenConverterFactory = starter
-				.startUsingConverterFactoryImplementations(converterFactoryImplementations);
-
-		assertEquals(choosenConverterFactory, converterFactorySpy);
-	}
-
-	@Test
-	public void testLoggingNormalStartup() throws Exception {
-		ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy();
-		converterFactoryImplementations.add(converterFactorySpy);
-
-		starter.startUsingConverterFactoryImplementations(converterFactoryImplementations);
-
-		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
-				"ConverterFactorySpy found as implemetation for ConverterFactory");
-		assertEquals(loggerFactorySpy.getNoOfInfoLogMessagesUsingClassName(testedClassName), 1);
+				"More than one implementations found for ConverterFactory with name XML");
 	}
 
 }

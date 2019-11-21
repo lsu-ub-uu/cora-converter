@@ -33,11 +33,15 @@ public class ConverterFactorySpy implements ConverterFactory {
 	}
 
 	@Override
-	public Converter factorConverter(String converterName) {
+	public Converter factorConverter() {
 
-		this.converterName = converterName;
 		this.converter = new ConverterSpy();
 		converter.factoryName = factoryName;
 		return converter;
+	}
+
+	@Override
+	public String getName() {
+		return factoryName;
 	}
 }

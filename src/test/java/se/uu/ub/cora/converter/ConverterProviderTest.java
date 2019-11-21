@@ -20,6 +20,7 @@
 package se.uu.ub.cora.converter;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotSame;
 import static org.testng.Assert.assertTrue;
 
@@ -33,6 +34,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.converter.spy.ConverterFactorySpy;
 import se.uu.ub.cora.converter.spy.ConverterSpy;
 import se.uu.ub.cora.converter.spy.log.LoggerFactorySpy;
 import se.uu.ub.cora.converter.starter.ConverterModuleStarter;
@@ -87,18 +89,17 @@ public class ConverterProviderTest {
 		assertTrue(Modifier.isSynchronized(declaredMethod.getModifiers()));
 	}
 
-	// TODO: Väldigt oklart vad gör den här test
-	// @Test
-	// public void testSetConverterFactoryForUsingInAnotherTest() throws Exception {
-	// startAndSetConverterModuleStarterSpy(1);
-	// ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy("xml1");
-	// ConverterProvider.setConverterFactory("xml1", converterFactorySpy);
-	//
-	// Converter converter = ConverterProvider.getConverter("xml1");
-	//
-	// assertEquals(converterFactorySpy.converterName, converterName);
-	// assertEquals(converter, converterFactorySpy.converter);
-	// }
+	@Test
+	public void testConverterFactoriesAreLoadedOnlyOnce() throws Exception {
+		ConverterModuleStarterSpy startAndSetConverterModuleStarterSpy = startAndSetConverterModuleStarterSpy(
+				1);
+		ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy("xml0");
+		ConverterProvider.setConverterFactory("xml0", converterFactorySpy);
+
+		ConverterProvider.getConverter("xml0");
+
+		assertFalse(startAndSetConverterModuleStarterSpy.startWasCalled);
+	}
 
 	private ConverterModuleStarterSpy startAndSetConverterModuleStarterSpy(
 			int noOfConverterFactoriesToReturn) {
@@ -181,8 +182,9 @@ public class ConverterProviderTest {
 	@Test
 	public void testIfExceptionIsThrownWhenConverterImplementationNotFoundAfterLoading()
 			throws Exception {
-		startAndSetConverterModuleStarterSpy(1);
+		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 		makeSureErrorIsThrownWhenImplementationNotFoundAfterLoading();
+		assertEquals(starter.converterFactories.size(), 1);
 
 	}
 

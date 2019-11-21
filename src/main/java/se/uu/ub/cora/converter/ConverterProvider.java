@@ -41,13 +41,13 @@ public class ConverterProvider {
 
 	public static Converter getConverter(String converterName) {
 		ensureConverterFactoryIsSet();
-		// TODO: second converterName can possibly be removed
 		ConverterFactory converterFactory = converterFactories.get(converterName);
 		if (converterFactory == null) {
 			throw new ConverterInitializationException(
 					"No implementations found for " + converterName + " converter.");
 		}
-		return converterFactory.factorConverter(converterName);
+		// TODO: converterName can possibly be removed
+		return converterFactory.factorConverter();
 	}
 
 	private static synchronized void ensureConverterFactoryIsSet() {
@@ -75,11 +75,10 @@ public class ConverterProvider {
 	 *            A ConverterFactory to use to create converters for testing
 	 */
 
-	// TODO: Might not be needed
-	// public static void setConverterFactory(String converterName,
-	// ConverterFactory converterFactory) {
-	// ConverterProvider.converterFactories.put(converterName, converterFactory);
-	// }
+	public static void setConverterFactory(String converterName,
+			ConverterFactory converterFactory) {
+		ConverterProvider.converterFactories.put(converterName, converterFactory);
+	}
 
 	static void setStarter(ConverterModuleStarter starter) {
 		ConverterProvider.starter = starter;

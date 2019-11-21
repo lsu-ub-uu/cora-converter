@@ -19,6 +19,7 @@
 
 package se.uu.ub.cora.converter.starter;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import se.uu.ub.cora.converter.ConverterFactory;
@@ -29,46 +30,59 @@ import se.uu.ub.cora.logger.LoggerProvider;
 public class ConverterModuleStarterImp implements ConverterModuleStarter {
 	private Logger loggerForClass = LoggerProvider
 			.getLoggerForClass(ConverterModuleStarterImp.class);
-	private ConverterFactory foundConverterFactory = null;
-	private int numberOfImplementations = 0;
+	private Map<String, ConverterFactory> foundConverterFactories;
 
 	@Override
 	public Map<String, ConverterFactory> startUsingConverterFactoryImplementations(
 			Iterable<ConverterFactory> converterFactoryImplementations) {
-		chooseAndCountFactories(converterFactoryImplementations);
+		foundConverterFactories = new HashMap<>();
+		addFoundFactories(converterFactoryImplementations);
 		throwErrorIfNotOne();
-		return foundConverterFactory;
+		return foundConverterFactories;
 	}
 
 	private void throwErrorIfNotOne() {
 		logAndThrowErrorIfNone();
-		logAndThrowErrorIfMoreThanOne();
 	}
 
-	private void chooseAndCountFactories(
-			Iterable<ConverterFactory> converterFactoryImplementations) {
+	private void addFoundFactories(Iterable<ConverterFactory> converterFactoryImplementations) {
 		for (ConverterFactory converterFactory : converterFactoryImplementations) {
-			numberOfImplementations++;
-			foundConverterFactory = converterFactory;
-			loggerForClass.logInfoUsingMessage(foundConverterFactory.getClass().getSimpleName()
-					+ " found as implemetation for ConverterFactory");
+			addFoundFactory(converterFactory);
 		}
 	}
 
+	private void addFoundFactory(ConverterFactory converterFactory) {
+		String converterFactoryName = converterFactory.getName();
+		logInfoMessage(converterFactory, converterFactoryName);
+		throwErrorIfMoreThanOneImplementationFoundForFactoryName(converterFactoryName);
+		foundConverterFactories.put(converterFactoryName, converterFactory);
+	}
+
+	private void logInfoMessage(ConverterFactory converterFactory, String converterFactoryName) {
+		loggerForClass.logInfoUsingMessage(converterFactory.getClass().getSimpleName()
+				+ " found as implementation for ConverterFactory with name "
+				+ converterFactoryName);
+	}
+
+	private void throwErrorIfMoreThanOneImplementationFoundForFactoryName(
+			String converterFactoryName) {
+		if (implementationForFactoryAlreadyAdded(converterFactoryName)) {
+			String errorMessage = "More than one implementations found for ConverterFactory with name "
+					+ converterFactoryName;
+			loggerForClass.logFatalUsingMessage(errorMessage);
+			throw new ConverterInitializationException(errorMessage);
+		}
+	}
+
+	private boolean implementationForFactoryAlreadyAdded(String converterFactoryName) {
+		return foundConverterFactories.containsKey(converterFactoryName);
+	}
+
 	private void logAndThrowErrorIfNone() {
-		if (numberOfImplementations == 0) {
+		if (foundConverterFactories.isEmpty()) {
 			String errorMessage = "No implementations found for ConverterFactory";
 			loggerForClass.logFatalUsingMessage(errorMessage);
 			throw new ConverterInitializationException(errorMessage);
 		}
 	}
-
-	private void logAndThrowErrorIfMoreThanOne() {
-		if (numberOfImplementations > 1) {
-			String errorMessage = "More than one implementations found for ConverterFactory";
-			loggerForClass.logFatalUsingMessage(errorMessage);
-			throw new ConverterInitializationException(errorMessage);
-		}
-	}
-
 }
