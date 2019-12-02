@@ -46,7 +46,6 @@ public class ConverterProvider {
 			throw new ConverterInitializationException(
 					"No implementations found for " + converterName + " converter.");
 		}
-		// TODO: converterName can possibly be removed
 		return converterFactory.factorConverter();
 	}
 
