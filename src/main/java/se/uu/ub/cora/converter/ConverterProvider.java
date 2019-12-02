@@ -42,11 +42,16 @@ public class ConverterProvider {
 	public static Converter getConverter(String converterName) {
 		ensureConverterFactoryIsSet();
 		ConverterFactory converterFactory = converterFactories.get(converterName);
+		ensureFactoryImplementationIsFound(converterName, converterFactory);
+		return converterFactory.factorConverter();
+	}
+
+	private static void ensureFactoryImplementationIsFound(String converterName,
+			ConverterFactory converterFactory) {
 		if (converterFactory == null) {
 			throw new ConverterInitializationException(
 					"No implementations found for " + converterName + " converter.");
 		}
-		return converterFactory.factorConverter();
 	}
 
 	private static synchronized void ensureConverterFactoryIsSet() {
