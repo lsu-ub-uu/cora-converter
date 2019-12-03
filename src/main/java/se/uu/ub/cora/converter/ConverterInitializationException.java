@@ -18,14 +18,33 @@
  */
 package se.uu.ub.cora.converter;
 
+/**
+ * Specific exception for converters. It is used as a exception holder for all excpetions thrown in
+ * Converter package.
+ */
 public class ConverterInitializationException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Constructor that creates a new ConverterInitializationException using a single message.
+	 * 
+	 * @param message
+	 *            String with the exception message in clear text.
+	 */
 	public ConverterInitializationException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Constructor that creates a new ConverterInitializationException using a single message and a
+	 * previous excpetion.
+	 * 
+	 * @param message
+	 *            String with the exception message in clear text.
+	 * @param exception
+	 *            an Exception which will be used as "caused by".
+	 */
 	public ConverterInitializationException(String message, Exception exception) {
 		super(message, exception);
 	}

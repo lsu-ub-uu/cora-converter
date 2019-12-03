@@ -17,12 +17,35 @@
  *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * 
+ */
+/**
+ * 
+ */
 package se.uu.ub.cora.converter;
 
 import se.uu.ub.cora.data.DataElement;
 
+/**
+ * Converter is used to convert between a String based format and DataElements or vice versa.
+ */
 public interface Converter {
+	/**
+	 * Returns a String containing the result of the convertion from the entered dataElement.
+	 * 
+	 * @param dataElement
+	 *            to convert from
+	 * @return result of the convertion as a String
+	 */
 	String convert(DataElement dataElement);
 
+	/**
+	 * Returns a DataElement containing the result of the convertion from the entered String.
+	 * 
+	 * @param dataString
+	 *            with the string representation of an element to convert from
+	 * @return result of the convertion as a DataElement
+	 */
 	DataElement convert(String dataString);
 }

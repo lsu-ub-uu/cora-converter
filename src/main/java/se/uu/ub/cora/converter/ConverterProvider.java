@@ -28,6 +28,12 @@ import se.uu.ub.cora.converter.starter.ConverterModuleStarterImp;
 import se.uu.ub.cora.logger.Logger;
 import se.uu.ub.cora.logger.LoggerProvider;
 
+/**
+ * This class is the way in to the Converter package. Via this provider the user can get a converter
+ * choosen by a given converter name that identifies an specific {@link ConverterProvider}
+ * 
+ * 
+ */
 public class ConverterProvider {
 
 	private static Map<String, ConverterFactory> converterFactories = new HashMap<>();
@@ -39,19 +45,22 @@ public class ConverterProvider {
 		throw new UnsupportedOperationException();
 	}
 
-	public static Converter getConverter(String converterName) {
+	/**
+	 * Returns a new Converter factored by the {@link ConverterFactory} identified by the param
+	 * name. The ConverterFactory and its Converter must be supplied by an implementation module at
+	 * runtime. If no implementation is found with the given ConverterFactory name, a
+	 * {@link ConverterInitializationException} is thrown.
+	 * 
+	 * @param name
+	 *            String with a name that identifies the desired Converter.
+	 * @return a new Converted factored by the {@link ConverterFactory} identified by the param
+	 *         converterName
+	 */
+	public static Converter getConverter(String name) {
 		ensureConverterFactoryIsSet();
-		ConverterFactory converterFactory = converterFactories.get(converterName);
-		ensureFactoryImplementationIsFound(converterName, converterFactory);
+		ConverterFactory converterFactory = converterFactories.get(name);
+		ensureFactoryImplementationIsFound(name, converterFactory);
 		return converterFactory.factorConverter();
-	}
-
-	private static void ensureFactoryImplementationIsFound(String converterName,
-			ConverterFactory converterFactory) {
-		if (converterFactory == null) {
-			throw new ConverterInitializationException(
-					"No implementations found for " + converterName + " converter.");
-		}
 	}
 
 	private static synchronized void ensureConverterFactoryIsSet() {
@@ -69,6 +78,14 @@ public class ConverterProvider {
 				.startUsingConverterFactoryImplementations(converterFactoryImplementations);
 	}
 
+	private static void ensureFactoryImplementationIsFound(String name,
+			ConverterFactory converterFactory) {
+		if (converterFactory == null) {
+			throw new ConverterInitializationException(
+					"No implementations found for " + name + " converter.");
+		}
+	}
+
 	/**
 	 * Sets a ConverterFactory that will be used to factor converters. This possibility to set a
 	 * ConverterFactory is provided to enable testing of converting in other classes and is not
@@ -78,9 +95,7 @@ public class ConverterProvider {
 	 * @param converterFactory
 	 *            A ConverterFactory to use to create converters for testing
 	 */
-
-	public static void setConverterFactory(String converterName,
-			ConverterFactory converterFactory) {
+	static void setConverterFactory(String converterName, ConverterFactory converterFactory) {
 		ConverterProvider.converterFactories.put(converterName, converterFactory);
 	}
 
