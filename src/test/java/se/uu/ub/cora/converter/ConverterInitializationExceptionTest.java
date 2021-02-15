@@ -22,8 +22,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.converter.ConverterInitializationException;
-
 public class ConverterInitializationExceptionTest {
 	@Test
 	public void testInit() {
