@@ -95,7 +95,8 @@ public class ConverterProvider {
 	 * @param converterFactory
 	 *            A ConverterFactory to use to create converters for testing
 	 */
-	static void setConverterFactory(String converterName, ConverterFactory converterFactory) {
+	public static void setConverterFactory(String converterName,
+			ConverterFactory converterFactory) {
 		ConverterProvider.converterFactories.put(converterName, converterFactory);
 	}
 
