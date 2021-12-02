@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uppsala University Library
+ * Copyright 2019, 2021 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -16,30 +16,14 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/**
- * 
- */
-/**
- * 
- */
 package se.uu.ub.cora.converter;
 
 import se.uu.ub.cora.data.DataElement;
 
 /**
- * Converter is used to convert between a String based format and DataElements or vice versa.
+ * StringToDataElementConverter is used to convert from a String based format to DataElement.
  */
-public interface Converter {
-	/**
-	 * Returns a String containing the result of the convertion from the entered dataElement.
-	 * 
-	 * @param dataElement
-	 *            to convert from
-	 * @return result of the convertion as a String
-	 */
-	String convert(DataElement dataElement);
-
+public interface StringToDataElementConverter {
 	/**
 	 * Returns a DataElement containing the result of the convertion from the entered String.
 	 * 

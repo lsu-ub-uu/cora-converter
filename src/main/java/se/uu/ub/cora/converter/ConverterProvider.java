@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uppsala University Library
+ * Copyright 2019, 2021 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -56,11 +56,25 @@ public class ConverterProvider {
 	 * @return a new Converted factored by the {@link ConverterFactory} identified by the param
 	 *         converterName
 	 */
-	public static Converter getConverter(String name) {
+	// public static Converter getConverter(String name) {
+	// ensureConverterFactoryIsSet();
+	// ConverterFactory converterFactory = converterFactories.get(name);
+	// ensureFactoryImplementationIsFound(name, converterFactory);
+	// return converterFactory.factorConverter();
+	// }
+
+	public static DataElementToStringConverter getDataElementToStringConverter(String name) {
 		ensureConverterFactoryIsSet();
 		ConverterFactory converterFactory = converterFactories.get(name);
 		ensureFactoryImplementationIsFound(name, converterFactory);
-		return converterFactory.factorConverter();
+		return converterFactory.factorDataElementToStringConverter();
+	}
+
+	public static StringToDataElementConverter getStringToDataElementConverter(String name) {
+		ensureConverterFactoryIsSet();
+		ConverterFactory converterFactory = converterFactories.get(name);
+		ensureFactoryImplementationIsFound(name, converterFactory);
+		return converterFactory.factorStringToDataElementConverter();
 	}
 
 	private static synchronized void ensureConverterFactoryIsSet() {
