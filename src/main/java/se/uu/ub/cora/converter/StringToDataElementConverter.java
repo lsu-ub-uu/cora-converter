@@ -22,6 +22,8 @@ import se.uu.ub.cora.data.DataElement;
 
 /**
  * StringToDataElementConverter is used to convert from a String based format to DataElement.
+ * <p>
+ * Implementations of StringToDataElementConverter are not expected to be thread safe.
  */
 public interface StringToDataElementConverter {
 	/**

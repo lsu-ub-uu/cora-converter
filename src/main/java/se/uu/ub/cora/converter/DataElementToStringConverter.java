@@ -21,7 +21,9 @@ package se.uu.ub.cora.converter;
 import se.uu.ub.cora.data.DataElement;
 
 /**
- * Converter is used to convert from a DataElement to a String based format.
+ * DataElementToStringConverter is used to convert from a DataElement to a String based format.
+ * <p>
+ * Implementations of DataElementToStringConverter are not expected to be thread safe.
  */
 public interface DataElementToStringConverter {
 	/**
