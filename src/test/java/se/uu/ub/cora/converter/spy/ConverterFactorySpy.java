@@ -20,8 +20,8 @@
 package se.uu.ub.cora.converter.spy;
 
 import se.uu.ub.cora.converter.ConverterFactory;
-import se.uu.ub.cora.converter.DataElementToStringConverter;
-import se.uu.ub.cora.converter.StringToDataElementConverter;
+import se.uu.ub.cora.converter.ExternallyConvertibleToStringConverter;
+import se.uu.ub.cora.converter.StringToExternallyConvertibleConverter;
 
 public class ConverterFactorySpy implements ConverterFactory {
 
@@ -38,15 +38,15 @@ public class ConverterFactorySpy implements ConverterFactory {
 	}
 
 	@Override
-	public StringToDataElementConverter factorStringToDataElementConverter() {
-		StringToDataElementConverterSpy stringToDataElementConverterSpy = new StringToDataElementConverterSpy();
+	public StringToExternallyConvertibleConverter factorStringToExternallyConvertableConverter() {
+		StringToExternallyConvertibleConverterSpy stringToDataElementConverterSpy = new StringToExternallyConvertibleConverterSpy();
 		stringToDataElementConverterSpy.factoryName = factoryName;
 		return stringToDataElementConverterSpy;
 	}
 
 	@Override
-	public DataElementToStringConverter factorDataElementToStringConverter() {
-		DataElementToStringConverterSpy dataElementToStringConverterSpy = new DataElementToStringConverterSpy();
+	public ExternallyConvertibleToStringConverter factorExternallyConvertableToStringConverter() {
+		ExternallyConvertibleToStringConverterSpy dataElementToStringConverterSpy = new ExternallyConvertibleToStringConverterSpy();
 		dataElementToStringConverterSpy.factoryName = factoryName;
 		return dataElementToStringConverterSpy;
 	}

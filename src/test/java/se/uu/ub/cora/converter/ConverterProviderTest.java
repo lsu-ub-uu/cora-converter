@@ -35,8 +35,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.converter.spy.ConverterFactorySpy;
-import se.uu.ub.cora.converter.spy.DataElementToStringConverterSpy;
-import se.uu.ub.cora.converter.spy.StringToDataElementConverterSpy;
+import se.uu.ub.cora.converter.spy.ExternallyConvertibleToStringConverterSpy;
+import se.uu.ub.cora.converter.spy.StringToExternallyConvertibleConverterSpy;
 import se.uu.ub.cora.converter.spy.log.LoggerFactorySpy;
 import se.uu.ub.cora.converter.starter.ConverterModuleStarter;
 import se.uu.ub.cora.converter.starter.ConverterModuleStarterImp;
@@ -97,8 +97,8 @@ public class ConverterProviderTest {
 		ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy("xml0");
 		ConverterProvider.setConverterFactory("xml0", converterFactorySpy);
 
-		ConverterProvider.getDataElementToStringConverter("xml0");
-		ConverterProvider.getStringToDataElementConverter("xml0");
+		ConverterProvider.getExternallyConvertibleToStringConverter("xml0");
+		ConverterProvider.getStringToExternallyConvertibleConverter("xml0");
 
 		assertFalse(startAndSetConverterModuleStarterSpy.startWasCalled);
 	}
@@ -115,7 +115,7 @@ public class ConverterProviderTest {
 	public void testConverterModuleStarterIsCalledOnGetDataElementConverter() throws Exception {
 		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 
-		ConverterProvider.getDataElementToStringConverter(converterName);
+		ConverterProvider.getExternallyConvertibleToStringConverter(converterName);
 		assertTrue(starter.startWasCalled);
 	}
 
@@ -123,14 +123,14 @@ public class ConverterProviderTest {
 	public void testConverterModuleStarterIsCalledOnGetStringConverter() throws Exception {
 		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 
-		ConverterProvider.getStringToDataElementConverter(converterName);
+		ConverterProvider.getStringToExternallyConvertibleConverter(converterName);
 		assertTrue(starter.startWasCalled);
 	}
 
 	@Test
 	public void testLoggingOnGetDataElementConverter() {
 		startAndSetConverterModuleStarterSpy(1);
-		ConverterProvider.getDataElementToStringConverter(converterName);
+		ConverterProvider.getExternallyConvertibleToStringConverter(converterName);
 
 		assertStartupLoggin();
 	}
@@ -145,7 +145,7 @@ public class ConverterProviderTest {
 	@Test
 	public void testLoggingOnGetStringConverter() {
 		startAndSetConverterModuleStarterSpy(1);
-		ConverterProvider.getStringToDataElementConverter(converterName);
+		ConverterProvider.getStringToExternallyConvertibleConverter(converterName);
 
 		assertStartupLoggin();
 	}
@@ -165,7 +165,7 @@ public class ConverterProviderTest {
 		startAndSetConverterModuleStarterSpy(0);
 		Exception caughtException = null;
 		try {
-			ConverterProvider.getDataElementToStringConverter(converterName);
+			ConverterProvider.getExternallyConvertibleToStringConverter(converterName);
 		} catch (Exception e) {
 			caughtException = e;
 		}
@@ -184,7 +184,7 @@ public class ConverterProviderTest {
 		startAndSetConverterModuleStarterSpy(0);
 		Exception caughtException = null;
 		try {
-			ConverterProvider.getStringToDataElementConverter(converterName);
+			ConverterProvider.getStringToExternallyConvertibleConverter(converterName);
 		} catch (Exception e) {
 			caughtException = e;
 		}
@@ -197,7 +197,7 @@ public class ConverterProviderTest {
 			throws Exception {
 		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 
-		ConverterProvider.getDataElementToStringConverter(converterName);
+		ConverterProvider.getExternallyConvertibleToStringConverter(converterName);
 
 		Iterable<ConverterFactory> iterable = starter.converterFactoryImplementations;
 		assertTrue(iterable instanceof ServiceLoader);
@@ -207,7 +207,7 @@ public class ConverterProviderTest {
 	public void testConverterFactoryImplementationsArePassedOnToStarterString() throws Exception {
 		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 
-		ConverterProvider.getStringToDataElementConverter(converterName);
+		ConverterProvider.getStringToExternallyConvertibleConverter(converterName);
 
 		Iterable<ConverterFactory> iterable = starter.converterFactoryImplementations;
 		assertTrue(iterable instanceof ServiceLoader);
@@ -218,14 +218,14 @@ public class ConverterProviderTest {
 
 		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(4);
 
-		DataElementToStringConverterSpy converter1 = (DataElementToStringConverterSpy) ConverterProvider
-				.getDataElementToStringConverter(converterName);
-		DataElementToStringConverterSpy converter2 = (DataElementToStringConverterSpy) ConverterProvider
-				.getDataElementToStringConverter("xml1");
-		StringToDataElementConverterSpy converter3 = (StringToDataElementConverterSpy) ConverterProvider
-				.getStringToDataElementConverter("xml2");
-		StringToDataElementConverterSpy converter4 = (StringToDataElementConverterSpy) ConverterProvider
-				.getStringToDataElementConverter("xml3");
+		ExternallyConvertibleToStringConverterSpy converter1 = (ExternallyConvertibleToStringConverterSpy) ConverterProvider
+				.getExternallyConvertibleToStringConverter(converterName);
+		ExternallyConvertibleToStringConverterSpy converter2 = (ExternallyConvertibleToStringConverterSpy) ConverterProvider
+				.getExternallyConvertibleToStringConverter("xml1");
+		StringToExternallyConvertibleConverterSpy converter3 = (StringToExternallyConvertibleConverterSpy) ConverterProvider
+				.getStringToExternallyConvertibleConverter("xml2");
+		StringToExternallyConvertibleConverterSpy converter4 = (StringToExternallyConvertibleConverterSpy) ConverterProvider
+				.getStringToExternallyConvertibleConverter("xml3");
 
 		assertNotSame(converter1.factoryName, converter2.factoryName);
 		assertNotSame(converter3.factoryName, converter4.factoryName);
@@ -246,7 +246,7 @@ public class ConverterProviderTest {
 		Exception caughtException = null;
 		try {
 
-			ConverterProvider.getDataElementToStringConverter(converterImplementationName);
+			ConverterProvider.getExternallyConvertibleToStringConverter(converterImplementationName);
 		} catch (Exception e) {
 			caughtException = e;
 		}
@@ -270,7 +270,7 @@ public class ConverterProviderTest {
 		Exception caughtException = null;
 		try {
 
-			ConverterProvider.getStringToDataElementConverter(converterImplementationName);
+			ConverterProvider.getStringToExternallyConvertibleConverter(converterImplementationName);
 		} catch (Exception e) {
 			caughtException = e;
 		}

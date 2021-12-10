@@ -25,7 +25,7 @@ import se.uu.ub.cora.data.DataElement;
  * <p>
  * Implementations of StringToDataElementConverter are not expected to be thread safe.
  */
-public interface StringToDataElementConverter {
+public interface StringToExternallyConvertibleConverter {
 	/**
 	 * Returns a DataElement containing the result of the convertion from the entered String.
 	 * 

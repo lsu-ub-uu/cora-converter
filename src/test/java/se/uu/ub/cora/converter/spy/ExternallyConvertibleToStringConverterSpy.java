@@ -19,15 +19,22 @@
 
 package se.uu.ub.cora.converter.spy;
 
-import se.uu.ub.cora.converter.StringToDataElementConverter;
-import se.uu.ub.cora.data.DataElement;
+import se.uu.ub.cora.converter.ExternallyConvertibleToStringConverter;
+import se.uu.ub.cora.data.ExternallyConvertible;
 
-public class StringToDataElementConverterSpy implements StringToDataElementConverter {
+public class ExternallyConvertibleToStringConverterSpy
+		implements ExternallyConvertibleToStringConverter {
 
 	public String factoryName = "";
 
 	@Override
-	public DataElement convert(String dataString) {
+	public String convert(ExternallyConvertible externallyConvertible) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String convertWithLinks(ExternallyConvertible externallyConvertible, String baseUrl) {
 		// TODO Auto-generated method stub
 		return null;
 	}

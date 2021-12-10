@@ -63,18 +63,20 @@ public class ConverterProvider {
 	// return converterFactory.factorConverter();
 	// }
 
-	public static DataElementToStringConverter getDataElementToStringConverter(String name) {
+	public static ExternallyConvertibleToStringConverter getExternallyConvertibleToStringConverter(
+			String name) {
 		ensureConverterFactoryIsSet();
 		ConverterFactory converterFactory = converterFactories.get(name);
 		ensureFactoryImplementationIsFound(name, converterFactory);
-		return converterFactory.factorDataElementToStringConverter();
+		return converterFactory.factorExternallyConvertableToStringConverter();
 	}
 
-	public static StringToDataElementConverter getStringToDataElementConverter(String name) {
+	public static StringToExternallyConvertibleConverter getStringToExternallyConvertibleConverter(
+			String name) {
 		ensureConverterFactoryIsSet();
 		ConverterFactory converterFactory = converterFactories.get(name);
 		ensureFactoryImplementationIsFound(name, converterFactory);
-		return converterFactory.factorStringToDataElementConverter();
+		return converterFactory.factorStringToExternallyConvertableConverter();
 	}
 
 	private static synchronized void ensureConverterFactoryIsSet() {
