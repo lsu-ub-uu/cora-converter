@@ -21,14 +21,16 @@ package se.uu.ub.cora.converter;
 import se.uu.ub.cora.data.ExternallyConvertible;
 
 /**
- * DataElementToStringConverter is used to convert from a DataElement to a String based format.
+ * ExternallyConvertibleToStringConverter is used to convert from a DataElement to a String based
+ * format.
  * <p>
- * Implementations of DataElementToStringConverter are not expected to be thread safe.
+ * Implementations of ExternallyConvertibleToStringConverter are not expected to be thread safe.
  */
 public interface ExternallyConvertibleToStringConverter {
 	/**
-	 * Returns a String containing the result of the convertion from the entered dataElement. If
-	 * links are required user {@link Converter#convertWithLinks(ExternallyConvertible, String)}
+	 * Returns a String containing the result of the convertion from the entered dataElement.
+	 * <p>
+	 * If links are required user {@link Converter#convertWithLinks(ExternallyConvertible, String)}
 	 * instead.
 	 * 
 	 * @param externallyConvertible
@@ -40,8 +42,9 @@ public interface ExternallyConvertibleToStringConverter {
 	/**
 	 * Returns a String containing the result of the convertion from the entered dataElement, with
 	 * actions converted to links. If the entered DataElement represents a DataGroup with
-	 * permissions are they also converted. If no links are required user
-	 * {@link Converter#convert(ExternallyConvertable)} instead.
+	 * permissions are they also converted.
+	 * <p>
+	 * If no links are required user {@link Converter#convert(ExternallyConvertable)} instead.
 	 * 
 	 * @param externallyConvertible
 	 *            to convert from
