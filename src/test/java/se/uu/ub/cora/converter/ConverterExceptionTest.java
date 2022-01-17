@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2021 Uppsala University Library
+ * Copyright 2019, 2022 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -18,22 +18,24 @@
  */
 package se.uu.ub.cora.converter;
 
-import se.uu.ub.cora.data.DataElement;
+import static org.testng.Assert.assertEquals;
 
-/**
- * StringToDataElementConverter is used to convert from a String based format to DataElement.
- * <p>
- * Implementations of StringToDataElementConverter are not expected to be thread safe.
- */
-public interface StringToExternallyConvertibleConverter {
-	/**
-	 * Returns a DataElement containing the result of the convertion from the entered String.
-	 * <p>
-	 * If conversion fails MUST a {@link ConverterException} be thrown.
-	 * 
-	 * @param dataString
-	 *            with the string representation of an element to convert from
-	 * @return result of the convertion as a DataElement
-	 */
-	DataElement convert(String dataString);
+import org.testng.annotations.Test;
+
+public class ConverterExceptionTest {
+	@Test
+	public void testInit() {
+		ConverterException converterException = new ConverterException("message");
+
+		assertEquals(converterException.getMessage(), "message");
+	}
+
+	@Test
+	public void testInitwithException() {
+		Exception exception = new Exception();
+		ConverterException converterException = new ConverterException("message", exception);
+
+		assertEquals(converterException.getMessage(), "message");
+		assertEquals(converterException.getCause(), exception);
+	}
 }

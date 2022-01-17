@@ -32,6 +32,8 @@ public interface ExternallyConvertibleToStringConverter {
 	 * <p>
 	 * If links are required user {@link Converter#convertWithLinks(ExternallyConvertible, String)}
 	 * instead.
+	 * <p>
+	 * If unable to convert to String a {@link ConverterException} be thrown.
 	 * 
 	 * @param externallyConvertible
 	 *            to convert from
@@ -45,6 +47,8 @@ public interface ExternallyConvertibleToStringConverter {
 	 * permissions are they also converted.
 	 * <p>
 	 * If no links are required user {@link Converter#convert(ExternallyConvertable)} instead.
+	 * <p>
+	 * If unable to convert to String a {@link ConverterException} should be thrown.
 	 * 
 	 * @param externallyConvertible
 	 *            to convert from
