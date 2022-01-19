@@ -31,8 +31,6 @@ import se.uu.ub.cora.logger.LoggerProvider;
 /**
  * This class is the way in to the Converter package. Via this provider the user can get a converter
  * choosen by a given converter name that identifies an specific {@link ConverterProvider}
- * 
- * 
  */
 public class ConverterProvider {
 
@@ -46,23 +44,16 @@ public class ConverterProvider {
 	}
 
 	/**
-	 * Returns a new Converter factored by the {@link ConverterFactory} identified by the param
-	 * name. The ConverterFactory and its Converter must be supplied by an implementation module at
-	 * runtime. If no implementation is found with the given ConverterFactory name, a
-	 * {@link ConverterInitializationException} is thrown.
+	 * Returns a new ExternallyConvertibleToStringConverter factored by the {@link ConverterFactory}
+	 * identified by the param name. The ConverterFactory and its Converter must be supplied by an
+	 * implementation module at runtime. If no implementation is found with the given
+	 * ConverterFactory name, a {@link ConverterInitializationException} is thrown.
 	 * 
 	 * @param name
 	 *            String with a name that identifies the desired Converter.
-	 * @return a new Converted factored by the {@link ConverterFactory} identified by the param
-	 *         converterName
+	 * @return a new ExternallyConvertibleToStringConverter factored by the {@link ConverterFactory}
+	 *         identified by the param converterName
 	 */
-	// public static Converter getConverter(String name) {
-	// ensureConverterFactoryIsSet();
-	// ConverterFactory converterFactory = converterFactories.get(name);
-	// ensureFactoryImplementationIsFound(name, converterFactory);
-	// return converterFactory.factorConverter();
-	// }
-
 	public static ExternallyConvertibleToStringConverter getExternallyConvertibleToStringConverter(
 			String name) {
 		ensureConverterFactoryIsSet();
@@ -71,6 +62,17 @@ public class ConverterProvider {
 		return converterFactory.factorExternallyConvertableToStringConverter();
 	}
 
+	/**
+	 * Returns a new StringToExternallyConvertibleConverter factored by the {@link ConverterFactory}
+	 * identified by the param name. The ConverterFactory and its Converter must be supplied by an
+	 * implementation module at runtime. If no implementation is found with the given
+	 * ConverterFactory name, a {@link ConverterInitializationException} is thrown.
+	 * 
+	 * @param name
+	 *            String with a name that identifies the desired Converter.
+	 * @return a new StringToExternallyConvertibleConverter factored by the {@link ConverterFactory}
+	 *         identified by the param converterName
+	 */
 	public static StringToExternallyConvertibleConverter getStringToExternallyConvertibleConverter(
 			String name) {
 		ensureConverterFactoryIsSet();
