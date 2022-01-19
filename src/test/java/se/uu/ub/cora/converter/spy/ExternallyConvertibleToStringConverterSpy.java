@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uppsala University Library
+ * Copyright 2021 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -19,20 +19,22 @@
 
 package se.uu.ub.cora.converter.spy;
 
-import se.uu.ub.cora.converter.Converter;
-import se.uu.ub.cora.data.DataElement;
+import se.uu.ub.cora.converter.ExternallyConvertibleToStringConverter;
+import se.uu.ub.cora.data.ExternallyConvertible;
 
-public class ConverterSpy implements Converter {
+public class ExternallyConvertibleToStringConverterSpy
+		implements ExternallyConvertibleToStringConverter {
+
 	public String factoryName = "";
 
 	@Override
-	public String convert(DataElement dataElement) {
+	public String convert(ExternallyConvertible externallyConvertible) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public DataElement convert(String dataString) {
+	public String convertWithLinks(ExternallyConvertible externallyConvertible, String baseUrl) {
 		// TODO Auto-generated method stub
 		return null;
 	}

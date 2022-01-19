@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uppsala University Library
+ * Copyright 2019, 2021 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -35,7 +35,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.converter.spy.ConverterFactorySpy;
-import se.uu.ub.cora.converter.spy.ConverterSpy;
+import se.uu.ub.cora.converter.spy.ExternallyConvertibleToStringConverterSpy;
+import se.uu.ub.cora.converter.spy.StringToExternallyConvertibleConverterSpy;
 import se.uu.ub.cora.converter.spy.log.LoggerFactorySpy;
 import se.uu.ub.cora.converter.starter.ConverterModuleStarter;
 import se.uu.ub.cora.converter.starter.ConverterModuleStarterImp;
@@ -96,7 +97,8 @@ public class ConverterProviderTest {
 		ConverterFactorySpy converterFactorySpy = new ConverterFactorySpy("xml0");
 		ConverterProvider.setConverterFactory("xml0", converterFactorySpy);
 
-		ConverterProvider.getConverter("xml0");
+		ConverterProvider.getExternallyConvertibleToStringConverter("xml0");
+		ConverterProvider.getStringToExternallyConvertibleConverter("xml0");
 
 		assertFalse(startAndSetConverterModuleStarterSpy.startWasCalled);
 	}
@@ -110,22 +112,42 @@ public class ConverterProviderTest {
 	}
 
 	@Test
-	public void testConverterModuleStarterIsCalledOnGetConverter() throws Exception {
+	public void testConverterModuleStarterIsCalledOnGetDataElementConverter() throws Exception {
 		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 
-		ConverterProvider.getConverter(converterName);
+		ConverterProvider.getExternallyConvertibleToStringConverter(converterName);
 		assertTrue(starter.startWasCalled);
 	}
 
 	@Test
-	public void testLoggingOnGetConverter() {
-		startAndSetConverterModuleStarterSpy(1);
-		ConverterProvider.getConverter(converterName);
+	public void testConverterModuleStarterIsCalledOnGetStringConverter() throws Exception {
+		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 
+		ConverterProvider.getStringToExternallyConvertibleConverter(converterName);
+		assertTrue(starter.startWasCalled);
+	}
+
+	@Test
+	public void testLoggingOnGetDataElementConverter() {
+		startAndSetConverterModuleStarterSpy(1);
+		ConverterProvider.getExternallyConvertibleToStringConverter(converterName);
+
+		assertStartupLoggin();
+	}
+
+	private void assertStartupLoggin() {
 		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
 				"ConverterProvider starting...");
 		assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 1),
 				"ConverterProvider started");
+	}
+
+	@Test
+	public void testLoggingOnGetStringConverter() {
+		startAndSetConverterModuleStarterSpy(1);
+		ConverterProvider.getStringToExternallyConvertibleConverter(converterName);
+
+		assertStartupLoggin();
 	}
 
 	@Test
@@ -139,29 +161,53 @@ public class ConverterProviderTest {
 	}
 
 	@Test
-	public void testErrorIsThrownWhenNoImplementationsAreFound() throws Exception {
+	public void testErrorIsThrownWhenNoImplementationsAreFoundDataElement() throws Exception {
 		startAndSetConverterModuleStarterSpy(0);
-		makeSureErrorIsThrownAsNoImplementationsExistInThisModuleWhenLoading();
-	}
-
-	private void makeSureErrorIsThrownAsNoImplementationsExistInThisModuleWhenLoading() {
 		Exception caughtException = null;
 		try {
-
-			ConverterProvider.getConverter(converterName);
+			ConverterProvider.getExternallyConvertibleToStringConverter(converterName);
 		} catch (Exception e) {
 			caughtException = e;
 		}
+
+		assertErrorAndLog(caughtException);
+	}
+
+	private void assertErrorAndLog(Exception caughtException) {
 		assertTrue(caughtException instanceof ConverterInitializationException);
 		assertEquals(caughtException.getMessage(),
 				"No implementations when loading, thrown by SPY");
 	}
 
 	@Test
-	public void testConverterFactoryImplementationsArePassedOnToStarter() throws Exception {
+	public void testErrorIsThrownWhenNoImplementationsAreFoundString() throws Exception {
+		startAndSetConverterModuleStarterSpy(0);
+		Exception caughtException = null;
+		try {
+			ConverterProvider.getStringToExternallyConvertibleConverter(converterName);
+		} catch (Exception e) {
+			caughtException = e;
+		}
+
+		assertErrorAndLog(caughtException);
+	}
+
+	@Test
+	public void testConverterFactoryImplementationsArePassedOnToStarterDataElement()
+			throws Exception {
 		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
 
-		ConverterProvider.getConverter(converterName);
+		ConverterProvider.getExternallyConvertibleToStringConverter(converterName);
+
+		Iterable<ConverterFactory> iterable = starter.converterFactoryImplementations;
+		assertTrue(iterable instanceof ServiceLoader);
+	}
+
+	@Test
+	public void testConverterFactoryImplementationsArePassedOnToStarterString() throws Exception {
+		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
+
+		ConverterProvider.getStringToExternallyConvertibleConverter(converterName);
 
 		Iterable<ConverterFactory> iterable = starter.converterFactoryImplementations;
 		assertTrue(iterable instanceof ServiceLoader);
@@ -170,30 +216,61 @@ public class ConverterProviderTest {
 	@Test
 	public void testConverterFactoryReturnsDifferentFactoriesBasedOnName() throws Exception {
 
-		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(2);
+		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(4);
 
-		ConverterSpy converter1 = (ConverterSpy) ConverterProvider.getConverter(converterName);
-		ConverterSpy converter2 = (ConverterSpy) ConverterProvider.getConverter("xml1");
+		ExternallyConvertibleToStringConverterSpy converter1 = (ExternallyConvertibleToStringConverterSpy) ConverterProvider
+				.getExternallyConvertibleToStringConverter(converterName);
+		ExternallyConvertibleToStringConverterSpy converter2 = (ExternallyConvertibleToStringConverterSpy) ConverterProvider
+				.getExternallyConvertibleToStringConverter("xml1");
+		StringToExternallyConvertibleConverterSpy converter3 = (StringToExternallyConvertibleConverterSpy) ConverterProvider
+				.getStringToExternallyConvertibleConverter("xml2");
+		StringToExternallyConvertibleConverterSpy converter4 = (StringToExternallyConvertibleConverterSpy) ConverterProvider
+				.getStringToExternallyConvertibleConverter("xml3");
 
 		assertNotSame(converter1.factoryName, converter2.factoryName);
-		assertEquals(starter.converterFactories.size(), 2);
+		assertNotSame(converter3.factoryName, converter4.factoryName);
+		assertEquals(starter.converterFactories.size(), 4);
 	}
 
 	@Test
-	public void testIfExceptionIsThrownWhenConverterImplementationNotFoundAfterLoading()
+	public void testIfExceptionIsThrownWhenDataElementToStringConverterImplementationNotFoundAfterLoading()
 			throws Exception {
 		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
-		makeSureErrorIsThrownWhenImplementationNotFoundAfterLoading();
+		makeSureErrorIsThrownWhenImplementationDataElementToStringConverterNotFoundAfterLoading();
 		assertEquals(starter.converterFactories.size(), 1);
 
 	}
 
-	private void makeSureErrorIsThrownWhenImplementationNotFoundAfterLoading() {
+	private void makeSureErrorIsThrownWhenImplementationDataElementToStringConverterNotFoundAfterLoading() {
 		String converterImplementationName = "NonexistingConverter";
 		Exception caughtException = null;
 		try {
 
-			ConverterProvider.getConverter(converterImplementationName);
+			ConverterProvider.getExternallyConvertibleToStringConverter(converterImplementationName);
+		} catch (Exception e) {
+			caughtException = e;
+		}
+		assertTrue(caughtException instanceof ConverterInitializationException);
+		assertEquals(caughtException.getMessage(),
+				"No implementations found for " + converterImplementationName + " converter.");
+
+	}
+
+	@Test
+	public void testIfExceptionIsThrownWhenStringToDataElementConverterImplementationNotFoundAfterLoading()
+			throws Exception {
+		ConverterModuleStarterSpy starter = startAndSetConverterModuleStarterSpy(1);
+		makeSureErrorIsThrownWhenImplementationStringToDataElementConverterNotFoundAfterLoading();
+		assertEquals(starter.converterFactories.size(), 1);
+
+	}
+
+	private void makeSureErrorIsThrownWhenImplementationStringToDataElementConverterNotFoundAfterLoading() {
+		String converterImplementationName = "NonexistingConverter";
+		Exception caughtException = null;
+		try {
+
+			ConverterProvider.getStringToExternallyConvertibleConverter(converterImplementationName);
 		} catch (Exception e) {
 			caughtException = e;
 		}

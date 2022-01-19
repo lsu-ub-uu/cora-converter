@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Uppsala University Library
+ * Copyright 2019, 2021 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -19,29 +19,35 @@
 
 package se.uu.ub.cora.converter.spy;
 
-import se.uu.ub.cora.converter.Converter;
 import se.uu.ub.cora.converter.ConverterFactory;
+import se.uu.ub.cora.converter.ExternallyConvertibleToStringConverter;
+import se.uu.ub.cora.converter.StringToExternallyConvertibleConverter;
 
 public class ConverterFactorySpy implements ConverterFactory {
 
 	public String factoryName;
 	public String converterName;
-	public ConverterSpy converter;
 
 	public ConverterFactorySpy(String name) {
 		this.factoryName = name;
 	}
 
 	@Override
-	public Converter factorConverter() {
-
-		this.converter = new ConverterSpy();
-		converter.factoryName = factoryName;
-		return converter;
+	public String getName() {
+		return factoryName;
 	}
 
 	@Override
-	public String getName() {
-		return factoryName;
+	public StringToExternallyConvertibleConverter factorStringToExternallyConvertableConverter() {
+		StringToExternallyConvertibleConverterSpy stringToDataElementConverterSpy = new StringToExternallyConvertibleConverterSpy();
+		stringToDataElementConverterSpy.factoryName = factoryName;
+		return stringToDataElementConverterSpy;
+	}
+
+	@Override
+	public ExternallyConvertibleToStringConverter factorExternallyConvertableToStringConverter() {
+		ExternallyConvertibleToStringConverterSpy dataElementToStringConverterSpy = new ExternallyConvertibleToStringConverterSpy();
+		dataElementToStringConverterSpy.factoryName = factoryName;
+		return dataElementToStringConverterSpy;
 	}
 }
