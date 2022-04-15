@@ -20,14 +20,15 @@
 package se.uu.ub.cora.converter.spy;
 
 import se.uu.ub.cora.converter.StringToExternallyConvertibleConverter;
-import se.uu.ub.cora.data.DataElement;
+import se.uu.ub.cora.data.ExternallyConvertible;
 
-public class StringToExternallyConvertibleConverterSpy implements StringToExternallyConvertibleConverter {
+public class StringToExternallyConvertibleConverterSpy
+		implements StringToExternallyConvertibleConverter {
 
 	public String factoryName = "";
 
 	@Override
-	public DataElement convert(String dataString) {
+	public ExternallyConvertible convert(String dataString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
