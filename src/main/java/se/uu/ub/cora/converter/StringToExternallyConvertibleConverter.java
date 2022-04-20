@@ -18,22 +18,24 @@
  */
 package se.uu.ub.cora.converter;
 
-import se.uu.ub.cora.data.DataElement;
+import se.uu.ub.cora.data.ExternallyConvertible;
 
 /**
- * StringToDataElementConverter is used to convert from a String based format to DataElement.
+ * StringToDataElementConverter is used to convert from a String based format to
+ * ExternallyConvertible.
  * <p>
  * Implementations of StringToDataElementConverter are not expected to be thread safe.
  */
 public interface StringToExternallyConvertibleConverter {
 	/**
-	 * Returns a DataElement containing the result of the convertion from the entered String.
+	 * Returns a ExternallyConvertible containing the result of the convertion from the entered
+	 * String.
 	 * <p>
 	 * If conversion fails MUST a {@link ConverterException} be thrown.
 	 * 
 	 * @param dataString
 	 *            with the string representation of an element to convert from
-	 * @return result of the convertion as a DataElement
+	 * @return result of the convertion as a ExternallyConvertible
 	 */
-	DataElement convert(String dataString);
+	ExternallyConvertible convert(String dataString);
 }
