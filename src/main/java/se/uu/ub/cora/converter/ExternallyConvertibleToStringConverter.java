@@ -30,8 +30,8 @@ public interface ExternallyConvertibleToStringConverter {
 	/**
 	 * Returns a String containing the result of the convertion from the entered dataElement.
 	 * <p>
-	 * If links are required user {@link Converter#convertWithLinks(ExternallyConvertible, String)}
-	 * instead.
+	 * If links are required user
+	 * {@link Converter#convertWithLinks(ExternallyConvertible, ExternalUrls)} instead.
 	 * <p>
 	 * If unable to convert to String a {@link ConverterException} be thrown.
 	 * 
@@ -52,10 +52,11 @@ public interface ExternallyConvertibleToStringConverter {
 	 * 
 	 * @param externallyConvertible
 	 *            to convert from
-	 * @param baseUrl
-	 *            A String with the baseUrl of the system to use when constructing links
+	 * @param externalUrls
+	 *            An object that holds external urls such as baseUrl and iiifUrl.
 	 * @return result of the convertion as a String with links for actions
 	 */
-	String convertWithLinks(ExternallyConvertible externallyConvertible, String baseUrl);
+	String convertWithLinks(ExternallyConvertible externallyConvertible,
+			ExternalUrls externalUrls);
 
 }

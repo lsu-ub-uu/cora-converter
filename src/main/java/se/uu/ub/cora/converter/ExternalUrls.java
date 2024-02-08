@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Uppsala University Library
+ * Copyright 2024 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -16,28 +16,34 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
  */
+package se.uu.ub.cora.converter;
 
-package se.uu.ub.cora.converter.spy;
+public class ExternalUrls {
 
-import se.uu.ub.cora.converter.ExternalUrls;
-import se.uu.ub.cora.converter.ExternallyConvertibleToStringConverter;
-import se.uu.ub.cora.data.ExternallyConvertible;
+	private String baseUrl;
+	private String iiifUrl;
 
-public class ExternallyConvertibleToStringConverterSpy
-		implements ExternallyConvertibleToStringConverter {
-
-	public String factoryName = "";
-
-	@Override
-	public String convert(ExternallyConvertible externallyConvertible) {
-		// TODO Auto-generated method stub
-		return null;
+	public void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
 	}
 
-	@Override
-	public String convertWithLinks(ExternallyConvertible externallyConvertible, ExternalUrls externalUrls) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getBaseUrl() {
+		return baseUrl;
 	}
 
+	public void setIfffUrl(String iiifUrl) {
+		this.iiifUrl = iiifUrl;
+	}
+
+	public String getIfffUrl() {
+		return iiifUrl;
+	}
+
+	public boolean hasBaseUrl() {
+		return baseUrl != null;
+	}
+
+	public boolean hasIfffUrl() {
+		return iiifUrl != null;
+	}
 }
